@@ -13,12 +13,13 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import it.unicam.corsoandroid.model.db.TodoItemHelper;
+import it.unicam.corsoandroid.model.entities.TodoItem;
 
 public class MainActivity extends AppCompatActivity {
 
-	private List<TodoItem> items = new ArrayList<>();
 	private TodoAdapter adapter;
 
 	@Override
@@ -35,21 +36,13 @@ public class MainActivity extends AppCompatActivity {
 		});
 
 		RecyclerView list = (RecyclerView) findViewById(R.id.list);
-
 		adapter = new TodoAdapter(this);
 		list.setAdapter(adapter);
-
 		list.setLayoutManager(new LinearLayoutManager(this));
+
+		loadItems();
 	}
 
-	//private List<TodoItem> fillList(){
-	//	List<TodoItem> items = new ArrayList<>();
-	//	for (int i = 0; i<100; i++){
-	//		items.add(new TodoItem("Oggetto " + i));
-	//	}
-	//
-	//	return items;
-	//}
 
 	private void addItem() {
 		final EditText editText = new EditText(this);
@@ -104,7 +97,12 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void createItem(String text) {
-		items.add(new TodoItem(text));
+		TodoItemHelper.insert(this, new TodoItem(text));
+		loadItems();
+	}
+
+	private void loadItems() {
+		List<TodoItem> items = TodoItemHelper.query(this);
 		adapter.setItems(items);
 	}
 }

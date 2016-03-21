@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import it.unicam.corsoandroid.model.entities.TodoItem;
+
 public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoHolder> {
 
 	private final LayoutInflater layoutInflater;
@@ -17,6 +19,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoHolder> {
 
 	public TodoAdapter(Context context) {
 		layoutInflater = LayoutInflater.from(context);
+		setHasStableIds(true);
 	}
 
 	public void setItems(List<TodoItem> items) {
@@ -33,13 +36,23 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoHolder> {
 	@Override
 	public void onBindViewHolder(TodoHolder holder, int position) {
 		TodoItem item = items.get(position);
-		holder.text.setText(item.text);
+		holder.text.setText(item.getText());
+	}
+
+	@Override
+	public long getItemId(int position) {
+		final TodoItem item = getItem(position);
+		return item != null ? item.getId() : 0;
 	}
 
 	@Override
 	public int getItemCount() {
 		if (items == null) return 0;
 		return items.size();
+	}
+
+	private TodoItem getItem(int position) {
+		return items != null ? items.get(position) : null;
 	}
 
 	public class TodoHolder extends RecyclerView.ViewHolder {
