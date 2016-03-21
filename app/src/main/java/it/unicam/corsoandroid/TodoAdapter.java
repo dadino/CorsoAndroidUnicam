@@ -1,6 +1,7 @@
 package it.unicam.corsoandroid;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,7 +44,13 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoHolder> {
 				if (listener != null) listener.onItemClicked(getItem(position));
 			}
 		});
-		holder.text.setText(item.getText());
+
+		if (item.isDone()) {
+			holder.text.setText(item.getText());
+			holder.text.setPaintFlags(holder.text.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+		} else {
+			holder.text.setText(item.getText());
+		}
 	}
 
 	@Override

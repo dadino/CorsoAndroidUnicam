@@ -3,10 +3,12 @@ package it.unicam.corsoandroid;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.Switch;
 
 import it.unicam.corsoandroid.model.db.TodoItemHelper;
 import it.unicam.corsoandroid.model.entities.TodoItem;
@@ -16,6 +18,7 @@ public class TodoDetailActivity extends AppCompatActivity {
 	private long     itemId;
 	private TodoItem item;
 	private EditText itemText;
+	private Switch   itemDone;
 
 	public static void show(Context context, long itemId) {
 		Intent intent = new Intent(context, TodoDetailActivity.class);
@@ -27,8 +30,13 @@ public class TodoDetailActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_todo_detail);
+		if (getActionBar() != null) {
+			getActionBar().setHomeButtonEnabled(true);
+			getActionBar().setDisplayHomeAsUpEnabled(true);
+		}
 
 		itemText = (EditText) findViewById(R.id.todo_item_text);
+		itemDone = (Switch) findViewById(R.id.todo_item_done);
 
 		if (getIntent() != null && getIntent().getExtras() != null) {
 			itemId = getIntent().getExtras()
@@ -41,6 +49,7 @@ public class TodoDetailActivity extends AppCompatActivity {
 	private void updateUi() {
 		if (item == null) return;
 		itemText.setText(item.getText());
+		itemDone.setChecked(item.isDone());
 	}
 
 	@Override
@@ -55,6 +64,9 @@ public class TodoDetailActivity extends AppCompatActivity {
 			case R.id.action_save_item:
 				saveItem();
 				break;
+			case android.R.id.home:
+				NavUtils.navigateUpFromSameTask(this);
+				break;
 		}
 		return true;
 	}
@@ -62,6 +74,7 @@ public class TodoDetailActivity extends AppCompatActivity {
 	private void updateItem() {
 		item.setText(itemText.getText()
 		                     .toString());
+		item.setDone(itemDone.isChecked());
 	}
 
 	private void saveItem() {
