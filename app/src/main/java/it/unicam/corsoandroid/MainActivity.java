@@ -18,7 +18,7 @@ import java.util.List;
 import it.unicam.corsoandroid.model.db.TodoItemHelper;
 import it.unicam.corsoandroid.model.entities.TodoItem;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements TodoAdapter.ItemListener {
 
 	private TodoAdapter adapter;
 
@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
 		RecyclerView list = (RecyclerView) findViewById(R.id.list);
 		adapter = new TodoAdapter(this);
+		adapter.setListener(this);
 		list.setAdapter(adapter);
 		list.setLayoutManager(new LinearLayoutManager(this));
 
@@ -104,5 +105,10 @@ public class MainActivity extends AppCompatActivity {
 	private void loadItems() {
 		List<TodoItem> items = TodoItemHelper.query(this);
 		adapter.setItems(items);
+	}
+
+	@Override
+	public void onItemClicked(TodoItem item) {
+		TodoDetailActivity.show(this, item.getId());
 	}
 }

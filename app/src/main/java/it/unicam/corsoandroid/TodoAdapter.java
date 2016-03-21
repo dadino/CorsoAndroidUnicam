@@ -15,6 +15,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoHolder> {
 
 	private final LayoutInflater layoutInflater;
 	private       List<TodoItem> items;
+	private       ItemListener   listener;
 
 
 	public TodoAdapter(Context context) {
@@ -34,8 +35,14 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoHolder> {
 	}
 
 	@Override
-	public void onBindViewHolder(TodoHolder holder, int position) {
+	public void onBindViewHolder(TodoHolder holder, final int position) {
 		TodoItem item = items.get(position);
+		holder.setClickListener(new ClickListener() {
+			@Override
+			public void onClick(View v, int position, boolean isLongClick) {
+				if (listener != null) listener.onItemClicked(getItem(position));
+			}
+		});
 		holder.text.setText(item.getText());
 	}
 
@@ -55,13 +62,47 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoHolder> {
 		return items != null ? items.get(position) : null;
 	}
 
-	public class TodoHolder extends RecyclerView.ViewHolder {
+	public void setListener(ItemListener listener) {
+		this.listener = listener;
+	}
 
-		private TextView text;
+	public interface ItemListener {
+
+		void onItemClicked(TodoItem item);
+	}
+
+	public interface ClickListener {
+
+		void onClick(View v, int position, boolean isLongClick);
+	}
+
+	public class TodoHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
+			View.OnLongClickListener {
+
+		private TextView      text;
+		private ClickListener clickListener;
 
 		public TodoHolder(View itemView) {
 			super(itemView);
 			text = (TextView) itemView.findViewById(R.id.item_text);
+
+			itemView.setOnClickListener(this);
+			itemView.setOnLongClickListener(this);
+		}
+
+		public void setClickListener(ClickListener clickListener) {
+			this.clickListener = clickListener;
+		}
+
+		@Override
+		public void onClick(View v) {
+			if (clickListener != null) clickListener.onClick(v, getLayoutPosition(), false);
+		}
+
+		@Override
+		public boolean onLongClick(View v) {
+			if (clickListener != null) clickListener.onClick(v, getLayoutPosition(), true);
+			return true;
 		}
 	}
 }
