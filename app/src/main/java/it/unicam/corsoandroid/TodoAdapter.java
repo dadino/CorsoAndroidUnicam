@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import java.util.List;
@@ -87,6 +88,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoHolder> {
 			View.OnLongClickListener {
 
 		private TextView      text;
+		private CheckBox      done;
 		private ClickListener clickListener;
 
 		public TodoHolder(View itemView) {
