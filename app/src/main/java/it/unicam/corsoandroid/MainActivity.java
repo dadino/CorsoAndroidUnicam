@@ -56,4 +56,12 @@ public class MainActivity extends AppCompatActivity implements TodoAdapter.ItemL
 	public void onItemClicked(TodoItem item) {
 		TodoDetailActivity.show(this, item.getId());
 	}
+
+	@Override
+	public void onItemDoneClicked(TodoItem item, boolean done) {
+		if (item.isDone() == done) return;
+		item.setDone(done);
+		TodoItemHelper.update(this, item);
+		loadItems();
+	}
 }

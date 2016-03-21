@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import java.util.List;
@@ -44,6 +45,11 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoHolder> {
 			public void onClick(View v, int position, boolean isLongClick) {
 				if (listener != null) listener.onItemClicked(getItem(position));
 			}
+
+			@Override
+			public void onDoneCheckChanged(int position, boolean done) {
+				if (listener != null) listener.onItemDoneClicked(getItem(position), done);
+			}
 		});
 
 		if (item.isDone()) {
@@ -52,6 +58,8 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoHolder> {
 		} else {
 			holder.text.setText(item.getText());
 		}
+
+		holder.done.setChecked(item.isDone());
 	}
 
 	@Override
@@ -77,15 +85,19 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoHolder> {
 	public interface ItemListener {
 
 		void onItemClicked(TodoItem item);
+		void onItemDoneClicked(TodoItem item, boolean done);
 	}
 
 	public interface ClickListener {
 
 		void onClick(View v, int position, boolean isLongClick);
+		void onDoneCheckChanged(int position, boolean done);
 	}
 
+
 	public class TodoHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
-			View.OnLongClickListener {
+			View.OnLongClickListener,
+			CompoundButton.OnCheckedChangeListener {
 
 		private TextView      text;
 		private CheckBox      done;
@@ -94,9 +106,12 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoHolder> {
 		public TodoHolder(View itemView) {
 			super(itemView);
 			text = (TextView) itemView.findViewById(R.id.item_text);
+			done = (CheckBox) itemView.findViewById(R.id.item_done);
 
 			itemView.setOnClickListener(this);
 			itemView.setOnLongClickListener(this);
+
+			done.setOnCheckedChangeListener(this);
 		}
 
 		public void setClickListener(ClickListener clickListener) {
@@ -112,6 +127,12 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoHolder> {
 		public boolean onLongClick(View v) {
 			if (clickListener != null) clickListener.onClick(v, getLayoutPosition(), true);
 			return true;
+		}
+
+		@Override
+		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			if (clickListener != null) clickListener.onDoneCheckChanged(getLayoutPosition(),
+					isChecked);
 		}
 	}
 }
