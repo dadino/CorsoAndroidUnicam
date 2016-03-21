@@ -41,9 +41,13 @@ public class MainActivity extends AppCompatActivity implements TodoAdapter.ItemL
 		list.setAdapter(adapter);
 		list.setLayoutManager(new LinearLayoutManager(this));
 
-		loadItems();
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+		loadItems();
+	}
 
 	private void addItem() {
 		final EditText editText = new EditText(this);

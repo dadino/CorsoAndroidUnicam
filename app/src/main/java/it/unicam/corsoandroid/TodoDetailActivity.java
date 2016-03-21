@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.EditText;
 
 import it.unicam.corsoandroid.model.db.TodoItemHelper;
@@ -39,5 +41,32 @@ public class TodoDetailActivity extends AppCompatActivity {
 	private void updateUi() {
 		if (item == null) return;
 		itemText.setText(item.getText());
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.item_detail_menu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.action_save_item:
+				saveItem();
+				break;
+		}
+		return true;
+	}
+
+	private void updateItem() {
+		item.setText(itemText.getText()
+		                     .toString());
+	}
+
+	private void saveItem() {
+		updateItem();
+		TodoItemHelper.update(this, item);
+		finish();
 	}
 }
