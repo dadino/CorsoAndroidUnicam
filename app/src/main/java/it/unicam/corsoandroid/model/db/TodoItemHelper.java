@@ -30,6 +30,9 @@ public class TodoItemHelper {
 
 		String sortOrder = TodoItemColumns._ID + " DESC";
 
+		//String selection = TodoItemColumns.COLUMN_NAME_DONE + "=?";
+		//String[] args = { String.valueOf(1)};
+
 		Cursor c = db.query(TodoItemColumns.TABLE_NAME, projection, null, null, null, null,
 				sortOrder);
 
@@ -37,6 +40,30 @@ public class TodoItemHelper {
 		c.close();
 		db.close();
 		return todoItems;
+	}
+
+	public static TodoItem query(Context context, long itemId) {
+		TodoDbHelper mDbHelper = new TodoDbHelper(context);
+		SQLiteDatabase db = mDbHelper.getReadableDatabase();
+		String[] projection =
+				{TodoItemColumns._ID, TodoItemColumns.COLUMN_NAME_TEXT, TodoItemColumns
+						.COLUMN_NAME_DONE};
+
+		String sortOrder = TodoItemColumns._ID + " DESC";
+
+		String selection = TodoItemColumns._ID + "=?";
+		String[] args = {String.valueOf(itemId)};
+
+		Cursor c = db.query(TodoItemColumns.TABLE_NAME, projection, selection, args, null, null,
+				sortOrder);
+
+		final List<TodoItem> todoItems = TodoItem.fromCursor(c);
+		TodoItem item = null;
+		if (todoItems != null && !todoItems.isEmpty()) item = todoItems.get(0);
+
+		c.close();
+		db.close();
+		return item;
 	}
 
 	public static int delete(Context context, long itemId) {
