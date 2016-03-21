@@ -26,6 +26,12 @@ public class TodoDetailActivity extends AppCompatActivity {
 		context.startActivity(intent);
 	}
 
+	public static void create(Context context) {
+		Intent intent = new Intent(context, TodoDetailActivity.class);
+		intent.putExtra("itemId", -1);
+		context.startActivity(intent);
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -40,7 +46,12 @@ public class TodoDetailActivity extends AppCompatActivity {
 
 		if (getIntent() != null && getIntent().getExtras() != null) {
 			itemId = getIntent().getExtras()
-			                    .getLong("itemId");
+			                    .getLong("itemId", -1);
+
+			if (itemId == -1) {
+				itemId = TodoItemHelper.insert(this, new TodoItem());
+			}
+
 			item = TodoItemHelper.query(this, itemId);
 			updateUi();
 		}
